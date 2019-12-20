@@ -5,20 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameOfLife.Frontend"
         mc:Ignorable="d"
-        Title="SinglePlayerWin" Height="450" Width="800">
+        Title="SinglePlayerWin" Height="450" Width="800"
+        Closing="SinglePlayerWin_Closing" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <StackPanel>
+            <Button x:Name="btnStart" Content="Start"  Canvas.Top="55" Click="btnStart_Click" />
+            <ComboBox x:Name="cbxMode">
+                <ComboBoxItem Content="Selection" HorizontalAlignment="Left" Width="118"/>
+                <ComboBoxItem Content="Aleatoire" IsSelected="True" HorizontalAlignment="Left" Width="118"/>
+            </ComboBox>
+            <Button x:Name="btnBreak" Content="Pause"  Canvas.Bottom="80" IsEnabled="False" Click="btnBreak_Click"/>
+            <Button x:Name="btnStop" Content="Stop" IsEnabled="False" Click="btnStop_Click"/>
+            <Expander x:Name="expander" Header="Expander" Height="100">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="36,28,0,0" VerticalAlignment="Top" Width="75"/>
+                </Grid>
+            </Expander>
+        </StackPanel>
 
-        <Button x:Name="BtnStart" Content="Start" Canvas.Left="22" Canvas.Top="55" Width="75" Click="BtnStart_Click" Margin="22,132,22,258"/>
-        <Button x:Name="BtnBreak" Content="Pause" Canvas.Left="22" Canvas.Top="80" Width="75" Height="26" Margin="22,0,22,192" VerticalAlignment="Bottom"/>
-        <Button x:Name="BtnStop" Content="Stop" Canvas.Left="22" Canvas.Top="105" Width="75" Margin="22,66,22,321" Click="BtnStop_Click"/>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <Canvas  x:Name="GameGrid" Margin="5,0,0,0" Grid.Column="2"/>
-        
+
 
     </Grid>
 </Window>

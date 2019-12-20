@@ -27,6 +27,8 @@ namespace GOL
             return Board;    
         }
 
+
+
         public void Start() {
             isRunning = true;
             MainLoop();
@@ -82,6 +84,12 @@ namespace GOL
             var alives = $"Alive: {Cell.Count}";
             var it = $"Iterations: {iterations}";
             return $"\n{Board}\n{alives}\t{it}";
+        }
+
+        internal void setCells(List<Cell> list) {
+            foreach(Cell cell in list) {
+                Board.Cells[cell.X, cell.Y].UpdateState();
+            }
         }
     }
 }

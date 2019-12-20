@@ -33,9 +33,7 @@ namespace GOL
             IterateOverCells((x, y) => {
                 Cells[x, y] = new Cell(x, y);
                 Cells[x, y].SetNeighbors();
-                
                 if (IsRandom && rand.Next(3) == 0)
-
                     Cells[x, y].UpdateState();
             });
         }
