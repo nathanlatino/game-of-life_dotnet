@@ -9,28 +9,26 @@
         Closing="SinglePlayerWin_Closing" >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel>
-            <Button x:Name="btnStart" Content="Start"  Canvas.Top="55" Click="btnStart_Click" />
-            <ComboBox x:Name="cbxMode">
-                <ComboBoxItem Content="Selection" HorizontalAlignment="Left" Width="118"/>
-                <ComboBoxItem Content="Aleatoire" IsSelected="True" HorizontalAlignment="Left" Width="118"/>
-            </ComboBox>
-            <Button x:Name="btnBreak" Content="Pause"  Canvas.Bottom="80" IsEnabled="False" Click="btnBreak_Click"/>
-            <Button x:Name="btnStop" Content="Stop" IsEnabled="False" Click="btnStop_Click"/>
-            <Expander x:Name="expander" Header="Expander" Height="100">
-                <Grid Background="#FFE5E5E5">
-                    <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="36,28,0,0" VerticalAlignment="Top" Width="75"/>
-                </Grid>
-            </Expander>
-        </StackPanel>
 
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-        <Canvas  x:Name="GameGrid" Margin="5,0,0,0" Grid.Column="2"/>
-
+        <Expander x:Name="expOptions" Header="Options" ExpandDirection="Right" Grid.Column="0" >
+            <StackPanel Background="#FFE5E5E5" AutomationProperties.IsOffscreenBehavior="FromClip" >
+                <Button x:Name="btnStart" Content="Start" Click="btnStart_Click" Margin="5,10,5,10"/>
+                <ComboBox x:Name="cbxMode" Margin="5,0,5,10">
+                    <ComboBoxItem Content="Selection" HorizontalAlignment="Left"/>
+                    <ComboBoxItem Content="Aleatoire" IsSelected="True" HorizontalAlignment="Left"/>
+                </ComboBox>
+                <Button x:Name="btnBreak" Content="Pause" Margin="5,0,5,10" IsEnabled="False" Click="btnBreak_Click"/>
+                <Button x:Name="btnStop" Content="Stop" Margin="5,0,5,10" IsEnabled="True" Click="btnStop_Click"/>
+            </StackPanel>
+        </Expander>
+        <UniformGrid x:Name="gameGrid" Grid.Column="1" >
+        </UniformGrid>
 
     </Grid>
+
 </Window>
+
+
