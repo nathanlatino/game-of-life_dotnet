@@ -16,7 +16,7 @@
 
         <Expander x:Name="expOptions"  ExpandDirection="Down" Grid.Row="0" IsExpanded="True" >
             <StackPanel Background="#FFE5E5E5" Orientation="Horizontal" AutomationProperties.IsOffscreenBehavior="FromClip" >
-                <Button x:Name="btnStart" Margin="5,10,5,10" Height="30" Click="btnStart_Click"  ToolTip="Lance la simulation" >
+                <Button x:Name="btnStart" Margin="5,10,5,10" Height="30" Click="BtnStart_Click"  ToolTip="Lance la simulation" >
                     <Image >
                         <Image.Source>
                             <BitmapImage DecodePixelWidth="80"  UriSource="/GameOfLife;component/Resources/play.png" />
@@ -24,21 +24,21 @@
                     </Image>
                 </Button>
 
-                <Button x:Name="btnBreak" Height="30" Click="btnBreak_Click" ToolTip="Pause/continue la simulation" IsEnabled="False">
+                <Button x:Name="btnBreak" Height="30" Click="BtnBreak_Click" ToolTip="Pause/continue la simulation" IsEnabled="False">
                     <Image >
                         <Image.Source>
                             <BitmapImage DecodePixelWidth="100"  UriSource="/GameOfLife;component/Resources/pause.png" />
                         </Image.Source>
                     </Image>
                 </Button>
-                <Button x:Name="btnStop" Margin="5,10,5,10"  ToolTip="Arrête la simulation" Height="30" IsEnabled="False" Click="btnStop_Click">
+                <Button x:Name="btnStop" Margin="5,10,5,10"  ToolTip="Arrête la simulation" Height="30" IsEnabled="False" Click="BtnStop_Click">
                     <Image >
                         <Image.Source>
                             <BitmapImage DecodePixelWidth="100"  UriSource="/GameOfLife;component/Resources/stop.png" />
                         </Image.Source>
                     </Image>
                 </Button>
-                <Button x:Name="btnReset" ToolTip="Recommencer avec une grille vierge" Height="30" Click="btnReset_Click">
+                <Button x:Name="btnReset" ToolTip="Recommencer avec une grille vierge" Height="30" Click="BtnReset_Click">
                     <Image >
                         <Image.Source>
                             <BitmapImage DecodePixelWidth="50"  UriSource="/GameOfLife;component/Resources/reset.png" />
@@ -67,6 +67,20 @@
                         <xctk:ColorPicker Name="clpCell" Width="50" Height="25"   SelectedColorChanged="ClpCell_SelectedColorChanged" Background="White" ColorMode="ColorCanvas" SelectedColor="Red" />
                     </StackPanel>
                 </GroupBox>
+                <Button x:Name="btnSave" Height="30" Click="BtnSave_Click"  ToolTip="Sauvegarder la configuration actuelle">
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="80"  UriSource="/GameOfLife;component/Resources/save.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+                <Button x:Name="btnLoad" Height="30" Width="30" Margin="5,10,5,10" Click="BtnLoad_Click"  ToolTip="Charger une configuration">
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="80"  UriSource="/GameOfLife;component/Resources/load.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
             </StackPanel>
         </Expander>
         <Viewbox Stretch="Uniform" Grid.Row="1">

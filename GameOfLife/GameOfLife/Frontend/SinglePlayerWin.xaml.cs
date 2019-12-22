@@ -1,9 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 using System.Windows.Shapes;
@@ -13,24 +19,27 @@ namespace GameOfLife.Frontend {
     /// <summary>
     /// Logique d'interaction pour SinglePlayerWin.xaml
     /// </summary>
-    public partial class SinglePlayerWin : Window {
-        private Rectangle[][] gridRect;
-        private int width = 20;
-        private int height = 20;
-        private int speed = 200;
+
+    public partial class SinglePlayerWin : Window{
+        public Rectangle[][] gridRect;
+        public int width = 20;
+        public int height = 20;
+        public int speed = 200;
         private Thread threadGame;
         private bool isBreak = false;
         private bool isRunning = false;
         private SolidColorBrush saveColor;
         private ManualResetEvent stopEvent;
-        private SolidColorBrush cellColor;
+        public SolidColorBrush cellColor;
 
         public SinglePlayerWin() {
             InitializeComponent();
             CreateGrid();
             stopEvent = new ManualResetEvent(true);
             cellColor = Brushes.Red;
-    }
+        }
+
+
 
         private void CreateGrid() {
             gridRect = new Rectangle[width][];
@@ -54,20 +63,16 @@ namespace GameOfLife.Frontend {
             
         }
 
-        private void R_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed && !isRunning)
-            {
+        private void R_MouseEnter(object sender, MouseEventArgs e) {
+            if (e.LeftButton == MouseButtonState.Pressed && !isRunning) {
                 Rectangle r = sender as Rectangle;
                 r.Fill = saveColor;
             }
 
         }
 
-        private void R_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (!isRunning)
-            {
+        private void R_MouseDown(object sender, MouseButtonEventArgs e) {
+            if (!isRunning) {
                 Rectangle r = sender as Rectangle;
                 saveColor = r.Fill == Brushes.White ? cellColor : Brushes.White;
                 r.Fill = saveColor;
@@ -87,12 +92,10 @@ namespace GameOfLife.Frontend {
             return cells;
         }
 
-        private GOL.GameOfLife InitStartGame()
-        {
+        private GOL.GameOfLife InitStartGame() {
             isBreak = false;
             GOL.GameOfLife game;
-            if (rbnRandom.IsChecked ?? true)
-            {
+            if (rbnRandom.IsChecked ?? true) {
                 game = new GOL.GameOfLife(width, height, true);
                 CreateGrid();
             } else {
@@ -104,16 +107,12 @@ namespace GameOfLife.Frontend {
 
 
 
-        private void GameRun(GOL.GameOfLife game)
-        {
-            while (true)
-            {
+        private void GameRun(GOL.GameOfLife game) {
+            while (true) {
                 stopEvent.WaitOne();
-                foreach (var cell in game.iterate())
-                    {
+                foreach (var cell in game.iterate()) {
                         SolidColorBrush color = cell.IsSet ? cellColor : Brushes.White;
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
+                        this.Dispatcher.BeginInvoke(new Action(() => {
                             gridRect[cell.X][cell.Y].Fill = color;
                         }));
                     }
@@ -121,13 +120,13 @@ namespace GameOfLife.Frontend {
             }
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
-        {
+        private void BtnStart_Click(object sender, RoutedEventArgs e){
             btnStart.IsEnabled = false;
             btnBreak.IsEnabled = true;
             btnStop.IsEnabled = true;
             gpbMode.IsEnabled = false;
             gpbSize.IsEnabled = false;
+            btnLoad.IsEnabled = false;
             isRunning = true;
             var game = InitStartGame();
             threadGame = new Thread(() => GameRun(game));
@@ -135,9 +134,8 @@ namespace GameOfLife.Frontend {
 
         }
 
-        private void btnStop_Click(object sender, RoutedEventArgs e) {
-            if(threadGame != null)
-            {
+        private void BtnStop_Click(object sender, RoutedEventArgs e) {
+            if(threadGame != null) {
                 threadGame.Abort();
             }
             btnStart.IsEnabled = true;
@@ -145,17 +143,74 @@ namespace GameOfLife.Frontend {
             btnStop.IsEnabled = false;
             gpbMode.IsEnabled = true;
             gpbSize.IsEnabled = true;
+            btnLoad.IsEnabled = true;
             isRunning = false;
+            if (isBreak) {
+                stopEvent.Set();
+            }
             isBreak = false;
         }
 
-        private void btnBreak_Click(object sender, RoutedEventArgs e) {
+        private void BtnBreak_Click(object sender, RoutedEventArgs e) {
             if (isBreak) {
                 stopEvent.Set();
             } else {
                 stopEvent.Reset();
             }
             isBreak = !isBreak;
+        }
+        private void BtnReset_Click(object sender, RoutedEventArgs e)
+        {
+            btnStart.IsEnabled = true;
+            btnBreak.IsEnabled = false;
+            btnStop.IsEnabled = false;
+            gpbMode.IsEnabled = true;
+            gpbSize.IsEnabled = true;
+            btnLoad.IsEnabled = true;
+            isRunning = false;
+            if (isBreak)
+            {
+                stopEvent.Set();
+            }
+            isBreak = false;
+            if (threadGame != null)
+            {
+                threadGame.Abort();
+            }
+            CreateGrid();
+        }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text files GOL (*.gol)|*.gol";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    var data = Serializer.Serialize(this);
+                    byte[] info = new UTF8Encoding(true).GetBytes(data);
+                    stream.Write(info, 0, info.Length);
+                }
+            }
+
+        }
+
+        private void BtnLoad_Click(object sender, RoutedEventArgs e) {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "load gol settings";
+            openFileDialog.Filter = "Text files GOL (*.gol)|*.gol";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (File.Exists(openFileDialog.FileName))
+                {
+                    var lines = File.ReadAllLines(openFileDialog.FileName, Encoding.UTF8);
+                    Serializer.Deserialize(this, lines);
+
+                }
+            }
+
         }
 
         private void IudSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
@@ -185,52 +240,29 @@ namespace GameOfLife.Frontend {
             iud.Value = iud.Value < iud.Minimum ? iud.Minimum : iud.Value > iud.Maximum ? iud.Value = iud.Maximum : iud.Value;
         }
 
-        private void SinglePlayerWin_Closing(object sender, CancelEventArgs e)
-        {
-            if (threadGame != null)
-            {
+        private void SinglePlayerWin_Closing(object sender, CancelEventArgs e) {
+            if (threadGame != null) {
                 threadGame.Abort();
             }
         }
 
 
 
-        private void ClpCell_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
-        {
+        private void ClpCell_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e){
             var newColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(clpCell.SelectedColor.ToString()));
             ChangeColor(newColor);
             cellColor = newColor;
         }
 
-        private void ChangeColor(SolidColorBrush newColor)
-        {
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (gridRect[i][j].Fill == cellColor)
-                    {
+        private void ChangeColor(SolidColorBrush newColor) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if (gridRect[i][j].Fill == cellColor) {
                         gridRect[i][j].Fill = newColor;
                     }
                 }
 
             }
-        }
-
-        private void btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            btnStart.IsEnabled = true;
-            btnBreak.IsEnabled = false;
-            btnStop.IsEnabled = false;
-            gpbMode.IsEnabled = true;
-            gpbSize.IsEnabled = true;
-            isRunning = false;
-            isBreak = false;
-            if (threadGame != null)
-            {
-                threadGame.Abort();
-            }
-            CreateGrid();
         }
     }
 }
