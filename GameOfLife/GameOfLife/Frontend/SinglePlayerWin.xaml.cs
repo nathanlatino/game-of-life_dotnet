@@ -5,7 +5,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 
 namespace GameOfLife.Frontend {
     /// <summary>
@@ -22,11 +24,12 @@ namespace GameOfLife.Frontend {
         public SinglePlayerWin() {
             InitializeComponent();
             CreateGrid();
+            //gridGame.ItemsSource = gridRect;
         }
 
         private void CreateGrid() {
 
-            gridRect = new Rectangle[height][];
+            gridRect = new Rectangle[width][];
             for (int i = 0; i < width; i++) {
                 gridRect[i] = new Rectangle[height];
                 for (int j = 0; j < height; j++) {
@@ -40,7 +43,10 @@ namespace GameOfLife.Frontend {
                     gridRect[i][j] = r;
                 }
             }
-            gridGame.ItemsSource = gridRect;
+            if(gridGame != null) {
+                gridGame.ItemsSource = gridRect;
+            }
+            
         }
 
 
@@ -118,6 +124,17 @@ namespace GameOfLife.Frontend {
         private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             Rectangle r = sender as Rectangle;
             r.Fill = r.Fill == Brushes.White ? r.Fill = Brushes.Red : r.Fill = Brushes.White;
+        }
+
+        private void Iud_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
+            var iud = sender as IntegerUpDown;
+            if(iud.Name == "iudWidth") {
+                width = iudWidth.Value ?? 20;
+            }
+            if (iud.Name == "iudHeigth") {
+                height = iudHeigth.Value ?? 20;
+            }
+            CreateGrid();
         }
     }
 }

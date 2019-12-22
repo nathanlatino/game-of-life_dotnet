@@ -9,14 +9,6 @@ namespace GOL
             X = x;
             Y = y;
         }
-
-        public static bool operator ==(Point2D obj1, Point2D obj2) {
-            return obj1.X == obj2.X && obj1.Y == obj2.Y;
-        }
-
-        public static bool operator !=(Point2D obj1, Point2D obj2) {
-            return obj1.X != obj2.X || obj1.Y != obj2.Y;
-        }
     }
 
 }
