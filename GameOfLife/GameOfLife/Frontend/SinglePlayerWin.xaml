@@ -9,28 +9,67 @@
         Title="SinglePlayerWin" Height="450" Width="800"
         Closing="SinglePlayerWin_Closing" >
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-        <Expander x:Name="expOptions" Header="Options" ExpandDirection="Right" Grid.Column="0" >
-            <StackPanel Background="#FFE5E5E5" AutomationProperties.IsOffscreenBehavior="FromClip" >
-                <Button x:Name="btnStart" Content="Start" Click="btnStart_Click" Margin="5,10,5,10"/>
-                <ComboBox x:Name="cbxMode" Margin="5,0,5,10">
-                    <ComboBoxItem Content="Selection" HorizontalAlignment="Left"/>
-                    <ComboBoxItem Content="Aleatoire" IsSelected="True" HorizontalAlignment="Left"/>
-                </ComboBox>
-                <StackPanel Orientation="Horizontal" Margin="5,0,5,10" AutomationProperties.IsOffscreenBehavior="FromClip" >
-                    
-                    <xctk:IntegerUpDown x:Name="iudWidth" Minimum="5" Maximum="500" Value="20" ValueChanged="Iud_ValueChanged"/>
-                    <xctk:IntegerUpDown x:Name="iudHeigth" Minimum="5" Maximum="500" Value="20" ValueChanged="Iud_ValueChanged"/>
-                </StackPanel>
-                <Button x:Name="btnBreak" Content="Pause" Margin="5,0,5,10"   IsEnabled="False" Click="btnBreak_Click"/>
-                <Button x:Name="btnStop" Content="Stop" Margin="5,0,5,10" IsEnabled="True" Click="btnStop_Click"/>
+        <Expander x:Name="expOptions"  ExpandDirection="Down" Grid.Row="0" IsExpanded="True" >
+            <StackPanel Background="#FFE5E5E5" Orientation="Horizontal" AutomationProperties.IsOffscreenBehavior="FromClip" >
+                <Button x:Name="btnStart" Margin="5,10,5,10" Height="30" Click="btnStart_Click"  ToolTip="Lance la simulation" >
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="80"  UriSource="/GameOfLife;component/Resources/play.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <Button x:Name="btnBreak" Height="30" Click="btnBreak_Click" ToolTip="Pause/continue la simulation" IsEnabled="False">
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="100"  UriSource="/GameOfLife;component/Resources/pause.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+                <Button x:Name="btnStop" Margin="5,10,5,10"  ToolTip="Arrête la simulation" Height="30" IsEnabled="False" Click="btnStop_Click">
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="100"  UriSource="/GameOfLife;component/Resources/stop.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+                <Button x:Name="btnReset" ToolTip="Recommencer avec une grille vierge" Height="30" Click="btnReset_Click">
+                    <Image >
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="50"  UriSource="/GameOfLife;component/Resources/reset.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+                <GroupBox x:Name="gpbMode" Header="Mode" Margin="5,0,5,0" Height="55" >
+                    <StackPanel >
+                        <RadioButton x:Name="rbnRandom" Content="Aléatoire" IsChecked="True"/>
+                        <RadioButton x:Name="rbnSelection"  Content="Sélection"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox x:Name="gpbSize" Header="Taille" Margin="5,0,5,0" Height="100">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Largeur</TextBlock>
+                        <xctk:IntegerUpDown x:Name="iudWidth" Minimum="5" Maximum="200" Value="20"  ValueChanged="IudSize_ValueChanged"/>
+                        <TextBlock Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">Hauteur</TextBlock>
+                        <xctk:IntegerUpDown x:Name="iudHeigth" Minimum="5" Maximum="200" Value="20" ValueChanged="IudSize_ValueChanged"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox x:Name="gpbOptions" Header="Options" Margin="5,5,5,5">
+                    <StackPanel>
+                        <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center">Vitesse (ms):</TextBlock>
+                        <xctk:IntegerUpDown x:Name="iudSpeed" Minimum="50" Maximum="5000" Value="200" Width="50" Height="20" ValueChanged="IudSpeed_ValueChanged"/>
+                        <TextBlock  Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">Couleur des cellules:</TextBlock>
+                        <xctk:ColorPicker Name="clpCell" Width="50" Height="25"   SelectedColorChanged="ClpCell_SelectedColorChanged" Background="White" ColorMode="ColorCanvas" SelectedColor="Red" />
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
         </Expander>
-        <Viewbox Stretch="Uniform" Grid.Column="1">
+        <Viewbox Stretch="Uniform" Grid.Row="1">
             <ItemsControl x:Name="gridGame"  ItemsSource="{Binding Cells}" >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
