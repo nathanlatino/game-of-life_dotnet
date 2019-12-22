@@ -8,8 +8,8 @@ namespace GOL
     public class GameOfLife
     {
         private readonly Board Board;
-        private readonly List<Cell> marked;
-        private readonly int updateSpeed;
+        private List<Cell> marked;
+        private int updateSpeed;
         private int iterations;
         private bool isRunning;
 
@@ -25,6 +25,11 @@ namespace GOL
 
         public Board GetBoard() {
             return Board;    
+        }
+
+        public void SetCells(List<Cell> marked) {
+            this.marked = marked;
+            UpdateCells();
         }
 
 
@@ -84,12 +89,6 @@ namespace GOL
             var alives = $"Alive: {Cell.Count}";
             var it = $"Iterations: {iterations}";
             return $"\n{Board}\n{alives}\t{it}";
-        }
-
-        internal void setCells(List<Cell> list) {
-            foreach(Cell cell in list) {
-                Board.Cells[cell.X, cell.Y].UpdateState();
-            }
         }
     }
 }

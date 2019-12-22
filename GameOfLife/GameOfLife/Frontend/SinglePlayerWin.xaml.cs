@@ -20,50 +20,49 @@ namespace GameOfLife.Frontend {
     /// Logique d'interaction pour SinglePlayerWin.xaml
     /// </summary>
     public partial class SinglePlayerWin : Window {
-        public Rectangle[,] gridRect;
+        private Rectangle[][] gridRect;
         private int width = 20;
-        private int height = 20;
-        Thread threadGame;
-        public bool blBreak;
+        private int height = 40;
+        private int time = 200;
+        private Thread threadGame;
+        private bool blBreak;
 
         public SinglePlayerWin() {
             InitializeComponent();
-            CreateGrid(20,20);
+            CreateGrid();
         }
 
-        public void CreateGrid(int width, int height) {
-            gameGrid.Columns = width;
-            gameGrid.Rows = height;
+        private void CreateGrid() {
 
-            int nbCases = width * height;
-            gridRect = new Rectangle[width, height];
+            gridRect = new Rectangle[height][];
             for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++)
-                {
+                gridRect[i] = new Rectangle[height];
+                for (int j = 0; j < height; j++) {
                     var r = new Rectangle();
+                    r.StrokeThickness = 1;
+                    r.Stroke = Brushes.Black;
                     r.Fill = Brushes.White;
-                    gridRect[i,j] = r;
-                    //Grid.SetColumn(r, i);
-                    //Grid.SetColumn(r, j);
-                    gameGrid.Children.Add(r);
+                    r.Width = 20;
+                    r.Height = 20;
+                    r.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
+                    gridRect[i][j] = r;
                 }
 
             }
+            gridGame.ItemsSource = gridRect;
         }
 
-        void OnRectangleMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            Rectangle r = sender as Rectangle;
-            r.Fill = r.Fill == Brushes.White ? r.Fill = Brushes.Red : r.Fill = Brushes.White;
-        }
 
         private List<GOL.Cell> GetCellsSelected() {
             List<GOL.Cell> cells = new List<GOL.Cell>();
-            int count = 0;
-            foreach (Rectangle r in gridRect) {
-                if (r.Fill == Brushes.Red) {
-                    cells.Add(new GOL.Cell(count / width, count % height));
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if (gridRect[i][j].Fill == Brushes.Red) {
+                        cells.Add(new GOL.Cell(j,i));
+                        Console.WriteLine($"{j}:{i}");
+                    }
                 }
-                count++;
+
             }
             return cells;
         }
@@ -75,34 +74,22 @@ namespace GameOfLife.Frontend {
 
             if (cbxMode.SelectedIndex == 0)
             {
-                game = new GOL.GameOfLife(20, 20, false, 200);
-                game.setCells(GetCellsSelected());
+                game = new GOL.GameOfLife(width, height, false);
+                game.SetCells(GetCellsSelected());
             }
             else
             {
-                game = new GOL.GameOfLife(20, 20, true, 200);
+                game = new GOL.GameOfLife(width, height, true);
             }
 
-
             var board = game.GetBoard();
-            //foreach (var cell in board.Cells)
-            //{
-            //    if (cell.IsSet)
-            //    {
-            //        gridRect.Find((X, Y) => cell.X == X && cell.Y == Y).
-            //        gridRect[cell.X*width+cell.Y*height].Fill = Brushes.Red;
-            //    }
-            //    else
-            //    {
-            //        gridRect[cell.X * width + cell.Y * height].Fill = Brushes.White;
-            //    }
-            //}
+            foreach (var cell in board.Cells) {
+                gridRect[cell.X][cell.Y].Fill = cell.IsSet ? Brushes.Red : Brushes.White;
+            }
             return game;
         }
 
         private void btnStart_Click(object sender, RoutedEventArgs e) {
-            btnStart.IsEnabled = false;
-            btnBreak.IsEnabled = true;
             var game = InitStartGame();
             threadGame = new Thread(() => GameRun(game));
             threadGame.Start();
@@ -120,10 +107,10 @@ namespace GameOfLife.Frontend {
                         SolidColorBrush color = cell.IsSet ? Brushes.Red : Brushes.White;
                         this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            //gridRect[cell.X * width + cell.Y * height].Fill = color;
+                            gridRect[cell.X][cell.Y].Fill = color;
                         }));
                     }
-                    Thread.Sleep(200);
+                    Thread.Sleep(time);
                 }
             }
         }
@@ -136,13 +123,16 @@ namespace GameOfLife.Frontend {
             blBreak = !blBreak;
         }
 
-        void SinglePlayerWin_Closing(object sender, CancelEventArgs e) {
+        private void SinglePlayerWin_Closing(object sender, CancelEventArgs e) {
             if (threadGame != null) {
                 threadGame.Abort();
-
             }
             new MainWindow().Show();
         }
 
+        private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            Rectangle r = sender as Rectangle;
+            r.Fill = r.Fill == Brushes.White ? r.Fill = Brushes.Red : r.Fill = Brushes.White;
+        }
     }
 }

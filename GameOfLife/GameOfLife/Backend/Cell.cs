@@ -11,6 +11,7 @@ namespace GOL
 
         public Cell(int x, int y) : base(x, y) { }
 
+        //public Cell(int x, int y, bool isSet) : base(x, y) { this.IsSet = isSet; }
         public void UpdateState() {
             Count += IsSet ? -1 : 1;
             IsSet = !IsSet;
