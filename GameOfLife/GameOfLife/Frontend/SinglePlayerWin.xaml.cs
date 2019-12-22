@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace GameOfLife.Frontend {
@@ -22,7 +14,7 @@ namespace GameOfLife.Frontend {
     public partial class SinglePlayerWin : Window {
         private Rectangle[][] gridRect;
         private int width = 20;
-        private int height = 40;
+        private int height = 20;
         private int time = 200;
         private Thread threadGame;
         private bool blBreak;
@@ -42,24 +34,22 @@ namespace GameOfLife.Frontend {
                     r.StrokeThickness = 1;
                     r.Stroke = Brushes.Black;
                     r.Fill = Brushes.White;
-                    r.Width = 20;
-                    r.Height = 20;
+                    r.Width = 100;
+                    r.Height = 100;
                     r.MouseLeftButtonDown += Rectangle_MouseLeftButtonDown;
                     gridRect[i][j] = r;
                 }
-
             }
             gridGame.ItemsSource = gridRect;
         }
 
 
-        private List<GOL.Cell> GetCellsSelected() {
+        private List<GOL.Cell> GetCellsSelected(GOL.GameOfLife game) {
             List<GOL.Cell> cells = new List<GOL.Cell>();
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     if (gridRect[i][j].Fill == Brushes.Red) {
-                        cells.Add(new GOL.Cell(j,i));
-                        Console.WriteLine($"{j}:{i}");
+                        cells.Add(game.GetBoard().Cells[i, j]);
                     }
                 }
 
@@ -75,16 +65,11 @@ namespace GameOfLife.Frontend {
             if (cbxMode.SelectedIndex == 0)
             {
                 game = new GOL.GameOfLife(width, height, false);
-                game.SetCells(GetCellsSelected());
+                game.SetCells(GetCellsSelected(game));
             }
             else
             {
                 game = new GOL.GameOfLife(width, height, true);
-            }
-
-            var board = game.GetBoard();
-            foreach (var cell in board.Cells) {
-                gridRect[cell.X][cell.Y].Fill = cell.IsSet ? Brushes.Red : Brushes.White;
             }
             return game;
         }
