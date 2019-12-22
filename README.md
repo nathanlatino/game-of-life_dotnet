@@ -18,4 +18,4 @@ La couleur des cellules est modifiables sur toutes les couleurs RGB.
 
 L'option de sauvegarde et recharge d'une partie à partir d'un fichier .gol est possible.
 
-Ce projet utilise Extended WPF Toolkit™ qui est permet d'avoir des components en plus. J'ai utlisé IntUpDown et ColorPicker.
+Ce projet utilise Extended WPF Toolkit™ qui est permet d'avoir des components en plus. IntUpDown et ColorPicker sont utilisés dans ce projet.
